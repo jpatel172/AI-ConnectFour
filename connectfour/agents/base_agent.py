@@ -1,6 +1,7 @@
 from connectfour.agents.computer_player import RandomAgent
 import random
 
+
 class TestAgent(RandomAgent):
     def __init__(self, name):
         super().__init__(name)
@@ -55,5 +56,5 @@ class TestAgent(RandomAgent):
             If we have won the game, return 1.
             If neither of the players has won, return a random number.
         """
-        
+
         return 0

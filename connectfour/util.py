@@ -42,4 +42,5 @@ def delay_move_execution(move_fn):
         end_delay = max(max_execution_time_in_sec - execution_time, 0)
         time.sleep(end_delay)
         return move
+
     return wrapper
