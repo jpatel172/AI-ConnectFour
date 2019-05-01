@@ -1,5 +1,6 @@
 from connectfour.agents.computer_player import RandomAgent
 import random
+import math
 
 
 class StudentAgent(RandomAgent):
@@ -9,7 +10,7 @@ class StudentAgent(RandomAgent):
 
     def __init__(self, name):
         super().__init__(name)
-        self.MaxDepth = 5
+        self.MaxDepth = 4
 
     def get_move(self, board):
         """
@@ -31,13 +32,13 @@ class StudentAgent(RandomAgent):
             # print(str(moves))
             next_state = board.next_state(self.id, move[1])
             moves.append(move)
-            vals.append(self.dfMiniMax(next_state, 1))
+            vals.append(self.dfMiniMax(next_state, 1, -math.inf, math.inf))
         bestMove = moves[vals.index(max(vals))]
 
         # return best row and column
         return bestMove
 
-    def dfMiniMax(self, board, depth):
+    def dfMiniMax(self, board, depth, alpha, beta):
         # Goal return column with maximized scores of all possible next states
         if depth == self.MaxDepth:
             return self.evaluateBoardState(board)
@@ -53,12 +54,18 @@ class StudentAgent(RandomAgent):
                 next_state = board.next_state(self.id, move[1])
 
             moves.append(move)
-            vals.append(self.dfMiniMax(next_state, depth + 1))
+            vals.append(self.dfMiniMax(next_state, depth + 1, alpha, beta))
 
         if depth % 2 == 1:
             bestVal = min(vals)
+            # beta = min(beta, vals)
+            # if beta >= alpha:
+            #     break
         else:
             bestVal = max(vals)
+            # alpha = max(alpha, val)
+            # if alpha >= beta:
+            #     break
 
         return bestVal
 
@@ -75,6 +82,8 @@ class StudentAgent(RandomAgent):
             # the opponent won
             return -1
         
+        if board.last_move[1] == board.DEFAULT_WIDTH - 4:
+            return 1
         """
         Your evaluation function should look at the current state and return a score for it. 
         As an example, the random agent provided works as follows:
