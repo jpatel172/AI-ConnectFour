@@ -73,32 +73,24 @@ class StudentAgent(RandomAgent):
             rows = []
             for column in range(board.DEFAULT_WIDTH):
                 rows.append(board.get_cell_value(row, column))
-            for c in range(board.DEFAULT_WIDTH):
+            for c in range(board.DEFAULT_WIDTH - 3):
                 connect = rows[c:c + board.num_to_connect]
                 reward += self.assess_reward(connect)
-
-        # reward center column
-        center_column = math.floor(board.DEFAULT_WIDTH/2)
-        center_rows = []
-        for row in range(board.DEFAULT_HEIGHT):
-            center_rows.append(board.get_cell_value(row, center_column))
-        agent_piece_count = center_rows.count(self.id)
-        reward += agent_piece_count * 2
-
         return reward
 
     def assess_reward(self, connect):
         reward = 0
+        # reward checking for opponent
+        if connect.count(self.opponent_player) == 3 and connect.count(0) == 1:
+            reward -= 4
+
+        # reward checking for student agent
         if connect.count(self.id) == 4:
             reward += 100
         elif connect.count(self.id) == 3 and connect.count(0) == 1:
             reward += 5
         elif connect.count(self.id) == 2 and connect.count(0) == 2:
             reward += 2
-
-        if connect.count(self.opponent_player) == 3 and connect.count(0) == 1:
-            reward -= 4
-
         return reward
 
     def evaluateBoardState(self, board):
