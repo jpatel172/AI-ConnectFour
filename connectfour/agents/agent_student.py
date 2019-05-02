@@ -31,14 +31,23 @@ class StudentAgent(RandomAgent):
         for move in valid_moves:
             next_state = board.next_state(self.id, move[1])
             moves.append(move)
-            vals.append(self.dfMiniMax(next_state, 1))
+            vals.append(self.min_max_ab_pruning(next_state, 1, -math.inf, math.inf))
         best_move = moves[vals.index(max(vals))]
 
         # return best row and column
         return best_move
 
-    # Goal return column with maximized scores of all possible next states
-    def dfMiniMax(self, board, depth):
+    def min_max_ab_pruning(self, board, depth, alpha, beta):
+        """
+        Min max algorith with Alpha Beta pruning
+        Args:
+            board: An instance of `Board` that is the current state of the board.
+            depth: current depth of the min max algorithm.
+            alpha: alpha value for alpha-beta pruning.
+            beta: beta value for alpha beta pruning.
+        Returns:
+            A reward/score of the current state of the game board.
+        """
         # Terminal state check
         if depth == self.MaxDepth:
             if board.winner() == self.id or board.winner() == self.opponent_id:
@@ -51,27 +60,27 @@ class StudentAgent(RandomAgent):
         if depth % 2 == 1:
             # Minimising player
             min_vals = []
-            val = math.inf
             for move in board.valid_moves():
                 next_state = board.next_state(self.id % 2 + 1, move[1])
                 moves.append(move)
-                min_vals.append(self.dfMiniMax(next_state, depth + 1))
+                min_vals.append(self.min_max_ab_pruning(next_state, depth + 1, alpha, beta))
                 new_reward = min(min_vals)
-                if new_reward < val:
-                    val = new_reward
-            return val
+                beta = min(beta, new_reward)
+                if alpha >= beta:
+                    break
+            return new_reward
         else:
             # maximising player
             max_vals = []
-            val = -math.inf
             for move in board.valid_moves():
                 next_state = board.next_state(self.id, move[1])
                 moves.append(move)
-                max_vals.append(self.dfMiniMax(next_state, depth + 1))
+                max_vals.append(self.min_max_ab_pruning(next_state, depth + 1, alpha, beta))
                 new_reward = max(max_vals)
-                if new_reward > val:
-                    val = new_reward
-            return val
+                alpha = max(alpha, new_reward)
+                if alpha >= beta:
+                    break
+            return new_reward
 
     def evaluateBoardState(self, board):
         """
