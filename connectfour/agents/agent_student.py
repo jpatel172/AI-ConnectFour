@@ -3,6 +3,7 @@ from connectfour.agents.computer_player import RandomAgent
 import random
 import math
 
+
 class StudentAgent(RandomAgent):
 
     opponent_player = 2
@@ -32,6 +33,8 @@ class StudentAgent(RandomAgent):
             next_state = board.next_state(self.id, move[1])
             moves.append(move)
             vals.append(self.dfMiniMax(next_state, 1))
+            print(str(moves))
+            print(str(vals))
         bestMove = moves[vals.index(max(vals))]
 
         # return best row and column
@@ -40,28 +43,35 @@ class StudentAgent(RandomAgent):
     def dfMiniMax(self, board, depth):
         # Goal return column with maximized scores of all possible next states
         if depth == self.MaxDepth:
-            return self.evaluateBoardState(board)
-        
-        valid_moves = board.valid_moves()
-        vals = []
-        moves = []
+            if board.winner() == self.id:
+                print("student is winning")
+                return 10000
+            elif board.winner() == self.opponent_player:
+                print("opponent is winning")
+                return -10000
+            else:
+                return self.evaluateBoardState(board)
 
+        moves = []
         if depth % 2 == 1:
             # Minimising player
+            min_vals = []
             val = math.inf
             for move in board.valid_moves():
                 next_state = board.next_state(self.id % 2 + 1, move[1])
                 moves.append(move)
-                vals.append(self.dfMiniMax(next_state, depth + 1))
-                new_reward = min(vals)
+                min_vals.append(self.dfMiniMax(next_state, depth + 1))
+                new_reward = min(min_vals)
         else:
             # maximising player
+            max_vals = []
             val = -math.inf
             for move in board.valid_moves():
                 next_state = board.next_state(self.id, move[1])
                 moves.append(move)
-                vals.append(self.dfMiniMax(next_state, depth + 1))
-                new_reward = max(vals)
+                max_vals.append(self.dfMiniMax(next_state, depth + 1))
+                new_reward = max(max_vals)
+
         return new_reward
 
     def reward_next_move(self, board):
@@ -85,6 +95,16 @@ class StudentAgent(RandomAgent):
                 connect = columns[r:r + board.num_to_connect]
                 reward += self.assess_reward(connect)
 
+        # reward for diagonal
+        for r in range(board.DEFAULT_HEIGHT - 3):
+            for c in range(board.DEFAULT_WIDTH - 3):
+                connect = [board.get_cell_value(r + 3 - i, c + i) for i in range(board.num_to_connect)]
+                reward += self.assess_reward(connect)
+        for r in range(board.DEFAULT_HEIGHT - 3):
+            for c in range(board.DEFAULT_WIDTH - 3):
+                connect = [board.get_cell_value(r + i, c + i) for i in range(board.num_to_connect)]
+                reward += self.assess_reward(connect)
+        
         return reward
 
     def assess_reward(self, connect):
@@ -95,24 +115,18 @@ class StudentAgent(RandomAgent):
 
         # reward checking for student agent
         if connect.count(self.id) == 4:
+            print("4 in diagonal")
             reward += 500
         elif connect.count(self.id) == 3 and connect.count(0) == 1:
+            print("3 in diagonal")
             reward += 25
         elif connect.count(self.id) == 2 and connect.count(0) == 2:
+            print("2 in diagonal")
             reward += 10
-        elif connect.count(self.id) == 1 and connect.count(0) == 3:
-            reward += 5
         return reward
 
     def evaluateBoardState(self, board):
-        if board.winner() == self.id:
-            print("student is winning")
-            return 10000
-        elif board.winner() == self.opponent_player:
-            print("opponent is winning")
-            return -10000
-        else:
-            return self.reward_next_move(board)
+        return self.reward_next_move(board)
         """
         Your evaluation function should look at the current state and return a score for it. 
         As an example, the random agent provided works as follows:
