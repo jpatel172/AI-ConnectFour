@@ -66,7 +66,6 @@ class StudentAgent(RandomAgent):
 
     def reward_next_move(self, board):
         reward = 0
-        moves = board.valid_moves()
 
         # reward for horizontal
         for row in range(board.DEFAULT_HEIGHT):
@@ -75,6 +74,16 @@ class StudentAgent(RandomAgent):
                 rows.append(board.get_cell_value(row, column))
             for c in range(board.DEFAULT_WIDTH - 3):
                 connect = rows[c:c + board.num_to_connect]
+                reward += self.assess_reward(connect)
+        return reward
+
+        # reward for vertical
+        for column in range(board.DEFAULT_WIDTH):
+            columns = []
+            for row in range(board.DEFAULT_HEIGHT):
+                columns.append(board.get_cell_value(row, column))
+            for r in range(board.DEFAULT_HEIGHT - 3):
+                connect = columns[r:r + board.num_to_connect]
                 reward += self.assess_reward(connect)
         return reward
 
