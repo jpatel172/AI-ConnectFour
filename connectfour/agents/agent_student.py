@@ -67,7 +67,7 @@ class StudentAgent(RandomAgent):
     def reward_next_move(self, board):
         reward = 0
 
-        # reward for horizontal
+        # reward for vertical
         for row in range(board.DEFAULT_HEIGHT):
             rows = []
             for column in range(board.DEFAULT_WIDTH):
@@ -76,7 +76,7 @@ class StudentAgent(RandomAgent):
                 connect = rows[c:c + board.num_to_connect]
                 reward += self.assess_reward(connect)
 
-        # reward for vertical
+        # reward for horizontal
         for column in range(board.DEFAULT_WIDTH):
             columns = []
             for row in range(board.DEFAULT_HEIGHT):
@@ -84,30 +84,33 @@ class StudentAgent(RandomAgent):
             for r in range(board.DEFAULT_HEIGHT - 3):
                 connect = columns[r:r + board.num_to_connect]
                 reward += self.assess_reward(connect)
+
         return reward
 
     def assess_reward(self, connect):
         reward = 0
         # reward checking for opponent
         if connect.count(self.opponent_player) == 3 and connect.count(0) == 1:
-            reward -= 4
+            reward -= 20
 
         # reward checking for student agent
         if connect.count(self.id) == 4:
-            reward += 100
+            reward += 500
         elif connect.count(self.id) == 3 and connect.count(0) == 1:
-            reward += 5
+            reward += 25
         elif connect.count(self.id) == 2 and connect.count(0) == 2:
-            reward += 2
+            reward += 10
+        elif connect.count(self.id) == 1 and connect.count(0) == 3:
+            reward += 5
         return reward
 
     def evaluateBoardState(self, board):
         if board.winner() == self.id:
             print("student is winning")
-            return 1
+            return 10000
         elif board.winner() == self.opponent_player:
             print("opponent is winning")
-            return -1
+            return -10000
         else:
             return self.reward_next_move(board)
         """
