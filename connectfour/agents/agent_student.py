@@ -75,7 +75,6 @@ class StudentAgent(RandomAgent):
             for c in range(board.DEFAULT_WIDTH - 3):
                 connect = rows[c:c + board.num_to_connect]
                 reward += self.assess_reward(connect)
-        return reward
 
         # reward for vertical
         for column in range(board.DEFAULT_WIDTH):
