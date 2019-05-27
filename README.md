@@ -1,6 +1,4 @@
-# RMIT AI - Connect4
-
-![screenshot](https://github.com/StevenKorevaar/ai1901-connectfour/blob/master/img/game_example-small.gif)
+AI - Connect4
 
 ## About The Game
 
@@ -40,8 +38,8 @@ Run `black` with: `pipenv run black connectfour tests` (You can omit `pipenv run
 
 ### Run
 
-1. `git clone https://github.com/stevenkorevaar/ai1901-connectfour.git`
-2. `cd rmit-connectfour`
+1. `git clone https://github.com/mrjpatel/AI-ConnectFour.git`
+2. `cd AI-ConnectFour`
 3. `pipenv install` (this will install all dependencies needed) 
 4. `pipenv shell` (activate the virtual environment for the project/directory)
     * To deactivate/exit from the environment just type `exit` or `Control-D`.
